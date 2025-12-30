@@ -1,4 +1,4 @@
-INPUTS=sample.txt # input.txt
+INPUTS=sample2.txt input.txt
 
 .PHONY: test
 
