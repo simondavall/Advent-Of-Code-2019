@@ -1,3 +1,4 @@
+using System.Numerics;
 using System.Text;
 
 namespace AocHelper;
@@ -38,8 +39,7 @@ public static class Helper
   public static int[] ToIntArray(this string[] array)
   {
     var intArray = new int[array.Length];
-    for (var i = 0; i < array.Length; i++)
-    {
+    for (var i = 0; i < array.Length; i++) {
       intArray[i] = array[i].ToInt();
     }
 
@@ -49,8 +49,7 @@ public static class Helper
   public static int[] ToIntArray(this Span<string> array)
   {
     var intArray = new int[array.Length];
-    for (var i = 0; i < array.Length; i++)
-    {
+    for (var i = 0; i < array.Length; i++) {
       intArray[i] = array[i].ToInt();
     }
 
@@ -60,8 +59,7 @@ public static class Helper
   public static long[] ToLongArray(this string[] array)
   {
     var longArray = new long[array.Length];
-    for (var i = 0; i < array.Length; i++)
-    {
+    for (var i = 0; i < array.Length; i++) {
       longArray[i] = array[i].ToLong();
     }
 
@@ -80,11 +78,9 @@ public static class Helper
   public static int[][] To2DIntArray(this string[] array)
   {
     var intArr = new int[array.Length][];
-    for (var i = 0; i < array.Length; i++)
-    {
+    for (var i = 0; i < array.Length; i++) {
       intArr[i] = new int[array[i].Length];
-      for (var j = 0; j < array[i].Length; j++)
-      {
+      for (var j = 0; j < array[i].Length; j++) {
         intArr[i][j] = array[i][j] - '0';
       }
     }
@@ -101,8 +97,7 @@ public static class Helper
 
   public static (T first, T second) ToTuplePair<T>(this T[] array)
   {
-    return array.Length switch
-    {
+    return array.Length switch {
       > 2 => throw new ArgumentException(
           $" Too many array members.{array.Length} This method requires an array of length 2."),
       < 2 => throw new ArgumentException(
@@ -125,8 +120,7 @@ public static class Helper
 
   public static (int first, int second, int third) ToIntTupleTriple(this string[] array)
   {
-    return array.Length switch
-    {
+    return array.Length switch {
       > 3 => throw new ArgumentException(
           $" Too many array members.{array.Length} This method requires an array of length 3."),
       < 3 => throw new ArgumentException(
@@ -137,8 +131,7 @@ public static class Helper
 
   public static (long first, long second, long third) ToLongTupleTriple(this string[] array)
   {
-    return array.Length switch
-    {
+    return array.Length switch {
       > 3 => throw new ArgumentException(
           $" Too many array members.{array.Length} This method requires an array of length 3."),
       < 3 => throw new ArgumentException(
@@ -167,26 +160,69 @@ public static class Helper
 
   public static string Print<T>(this T[] arr, int max = 10)
   {
-    if (arr.Length > max)
-    {
+    if (arr.Length > max) {
       return $"[{string.Join(", ", arr[..max])} ... ]";
-    }
-    else
-    {
+    } else {
       return $"[{string.Join(", ", arr)}]";
     }
   }
 
-  public static string Print<TKey, TValue>(this Dictionary<TKey, TValue> dict, int max = 10) where TKey: notnull
+  public static string Print<TKey, TValue>(this Dictionary<TKey, TValue> dict, int max = 10) where TKey : notnull
   {
     var str = new StringBuilder();
-    foreach(var (k, v) in dict){
-     str.Append($"[{k}:{v}], ");
-     if (--max == 0){
-       str.Append($"... max {max} shown");
-       break;
-     }
+    foreach (var (k, v) in dict) {
+      str.Append($"[{k}:{v}], ");
+      if (--max == 0) {
+        str.Append($"... max {max} shown");
+        break;
+      }
     }
     return str.ToString();
+  }
+
+  public static void VarDump<T>(T[] arr)
+  {
+    Console.Write("[");
+    for (var i = 0; i < arr.Length; i++) {
+      Console.Write($"{arr[i]}, ");
+    }
+    Console.Write("\b\b]\n");
+    Console.WriteLine();
+  }
+
+  public static void VarDump<T>(T[][] arr, params string[] p) where T : INumber<T>
+  {
+    var len = arr.Length;
+    int idxLen = len.ToString().Length;
+    if (p.Contains("-np")) { // no padding
+      for (var i = 0; i < len; i++) {
+        for (var j = 0; j < arr[i].Length; j++) {
+          if (arr[i][j] < T.Zero)
+            Console.Write($"\u001b[31m{T.Abs(arr[i][j])}\u001b[0m");
+          else
+            Console.Write($"\u001b[32m{arr[i][j]}\u001b[0m");
+        }
+        Console.Write("\n");
+      }
+    } else {
+      for (var i = 0; i < len; i++) {
+        PaddedString("[", i.ToString(), '0', idxLen, "] = [");
+        for (var j = 0; j < arr[i].Length; j++) {
+          if (arr[i][j] < T.Zero)
+            Console.Write($"\u001b[31m{T.Abs(arr[i][j])}\u001b[0m, ");
+          else
+            Console.Write($"\u001b[32m{arr[i][j]}\u001b[0m, ");
+        }
+        Console.Write("\b\b]\n");
+      }
+    }
+    Console.WriteLine();
+  }
+
+  private static void PaddedString(string prefix, string value, char format, int padding, string postfix)
+  {
+    Console.Write(prefix);
+    Console.Write(string.Format("{0," + padding + "}", value));
+    Console.Write(postfix);
   }
 }
