@@ -1,6 +1,7 @@
-﻿using AocHelper;
+﻿namespace Day18;
 
-namespace Day18;
+using StepsToKey = Dictionary<char, (int steps, string doorsBetween)>;
+using StepsBetweenKeys = Dictionary<int, Dictionary<char, Dictionary<char, (int steps, string doorsBetween)>>>;
 
 internal static partial class Program
 {
@@ -29,9 +30,8 @@ internal static partial class Program
       var (r, c, keys, depth) = q.Dequeue();
 
       var ch = map[r, c];
-      if (ch >= 'A' && ch < +'Z' && !keys.Contains(char.ToLower(ch))) {
+      if (ch >= 'A' && ch < +'Z' && !keys.Contains(char.ToLower(ch)))
         continue;
-      }
 
       Keys? newKeys = null;
       if (ch >= 'a' && ch <= 'z') {
@@ -44,14 +44,12 @@ internal static partial class Program
       var nkeys = newKeys ?? keys;
       foreach (var (dr, dc) in _directions) {
         var (nr, nc) = (r + dr, c + dc);
-        if (map[nr, nc] == '#') {
+        if (map[nr, nc] == '#')
           continue;
-        }
 
         var cacheKey = (nr, nc, nkeys.ToString());
-        if (seen.Contains(cacheKey)) {
+        if (seen.Contains(cacheKey))
           continue;
-        }
         seen.Add(cacheKey);
 
         q.Enqueue((nr, nc, nkeys, depth + 1));
@@ -60,19 +58,19 @@ internal static partial class Program
     return -1;
   }
 
-  private static long PartTwo(string[] data, string input)
+  private static long PartTwo(string[] data)
   {
     var (map, start) = ProcessData(data);
 
     int minSteps = int.MaxValue;
 
     var robots = AlterMap(map, start);
-    Dictionary<char, bool> foundKeys = _keys.ToDictionary(kl => kl.Key, kl => false);
+    var foundKeys = new Keys();
 
-    var stepsFromKeyToKeys = new Dictionary<int, Dictionary<char, Dictionary<char, (int Steps, string DoorsBetween)>>>();
+    var stepsFromKeyToKeys = new StepsBetweenKeys();
 
-    for (int i = 0; i < robots.Count; i++) {
-      var stepsBetweenKeys = new Dictionary<char, Dictionary<char, (int Steps, string DoorsBetween)>>();
+    for (int i = 0; i < robots.Length; i++) {
+      var stepsBetweenKeys = new Dictionary<char, StepsToKey>();
 
       var q = new Queue<(int r, int c)>();
       q.Enqueue(robots[i]);
@@ -81,18 +79,16 @@ internal static partial class Program
         (int r, int c) keyPosition = q.Dequeue();
         char key = map[keyPosition.r, keyPosition.c];
 
-        var reachableKeys = new Dictionary<char, (int Steps, string DoorsBetween)>();
+        var reachableKeys = new StepsToKey();
 
-        GetStepsBetweenKeys(map, keyPosition, 0, string.Empty, new Dictionary<string, int>(), reachableKeys);
+        GetStepsBetweenKeys(map, keyPosition, 0, string.Empty, new Dictionary<(int, int), int>(), reachableKeys);
 
         reachableKeys.Remove(key);
         stepsBetweenKeys[key] = reachableKeys;
 
-        foreach (char reachableKey in reachableKeys.Keys) {
-          if (!stepsBetweenKeys.ContainsKey(reachableKey)) {
+        foreach (char reachableKey in reachableKeys.Keys)
+          if (!stepsBetweenKeys.ContainsKey(reachableKey))
             q.Enqueue(_keys[reachableKey]);
-          }
-        }
       }
 
       stepsFromKeyToKeys[i] = stepsBetweenKeys;
@@ -104,89 +100,64 @@ internal static partial class Program
   }
 
   private static void GetShortestPath(
-      char[,] tunnelsMap,
+      char[,] map,
       int currentRobot,
-      List<(int, int)> robots,
-      Dictionary<int, Dictionary<char, Dictionary<char, (int Steps, string DoorsBetween)>>> stepsFromKeyToKeys,
-      Dictionary<string, int> statesCache,
-      Dictionary<char, bool> foundKeys,
+      (int, int)[] robots,
+      StepsBetweenKeys stepsBetweenKeys,
+      Dictionary<string, int> cachedStates,
+      Keys foundKeys,
       int steps,
       ref int minSteps
   )
   {
-    if (steps >= minSteps) {
+    if (steps >= minSteps)
       return;
-    }
 
-    string remainingKeys = string.Concat(foundKeys.Where(fk => fk.Value == false).Select(fk => fk.Key));
-    string state = StringifyState(remainingKeys, currentRobot, robots);
-
-    if (statesCache.ContainsKey(state) && steps >= statesCache[state]) {
+    var cacheKey = CacheKey(foundKeys.ToString(), currentRobot, robots);
+    if (cachedStates.ContainsKey(cacheKey) && steps >= cachedStates[cacheKey])
       return;
-    }
-    statesCache[state] = steps;
+    cachedStates[cacheKey] = steps;
 
-    if (!foundKeys.Where(fk => fk.Value == false).Any()) {
+    if (foundKeys.Length == _maxKeys) {
       minSteps = steps;
       return;
     }
 
     var (r, c) = robots[currentRobot];
-    char currentKey = tunnelsMap[r, c];
+    char currentKey = map[r, c];
 
-    var reachableKeys = GetReachableKeys(stepsFromKeyToKeys[currentRobot][currentKey], foundKeys);
+    var reachableKeys = GetReachableKeys(stepsBetweenKeys[currentRobot][currentKey], foundKeys);
 
     if (reachableKeys.Count > 0) {
-      foreach (KeyValuePair<char, int> reachableKey in reachableKeys) {
-        char nextKey = reachableKey.Key;
-        int newSteps = steps + reachableKey.Value;
+      foreach (var (nextKey, stepsToNextKey) in reachableKeys) {
+        int newSteps = steps + stepsToNextKey;
 
-        Dictionary<char, bool> nextFoundKeys = foundKeys.ToDictionary(fk => fk.Key, fk => fk.Value);
-        nextFoundKeys[nextKey] = true;
+        Keys nextFoundKeys = foundKeys.Clone();
+        nextFoundKeys.Add(nextKey);
 
-        List<(int r, int c)> nextRobotsPositions = robots.ToList();
-        nextRobotsPositions[currentRobot] = _keys[nextKey];
+        var nextRobots = robots.ToArray();
+        nextRobots[currentRobot] = _keys[nextKey];
 
-        GetShortestPath(
-            tunnelsMap,
-            currentRobot,
-            nextRobotsPositions,
-            stepsFromKeyToKeys,
-            statesCache,
-            nextFoundKeys,
-            newSteps,
-            ref minSteps
-        );
+        GetShortestPath(map, currentRobot, nextRobots, stepsBetweenKeys, cachedStates, nextFoundKeys, newSteps, ref minSteps);
       }
     }
 
-    for (int nextRobot = 0; nextRobot < robots.Count; nextRobot++) {
-      if (nextRobot != currentRobot) {
-        GetShortestPath(
-            tunnelsMap,
-            nextRobot,
-            robots.ToList(),
-            stepsFromKeyToKeys,
-            statesCache,
-            foundKeys.ToDictionary(fk => fk.Key, fk => fk.Value),
-            steps,
-            ref minSteps
-        );
-      }
-    }
+    for (int nextRobot = 0; nextRobot < robots.Length; nextRobot++)
+      if (nextRobot != currentRobot)
+        GetShortestPath(map, nextRobot, robots.ToArray(), stepsBetweenKeys, cachedStates, foundKeys.Clone(), steps, ref minSteps);
   }
 
-  private static Dictionary<char, int> GetReachableKeys(Dictionary<char, (int Steps, string DoorsBetween)> stepsToKey, Dictionary<char, bool> foundKeys)
+  private static Dictionary<char, int> GetReachableKeys(StepsToKey stepsToKey, Keys foundKeys)
   {
     var reachableKeys = new Dictionary<char, int>();
 
     foreach (var (key, (steps, doorsBetween)) in stepsToKey) {
-      if (foundKeys[key])
+      if (foundKeys.Contains(key))
         continue;
 
       bool doorLocked = false;
       foreach (char door in doorsBetween) {
-        if (!foundKeys[door]) {
+        if (!foundKeys.Contains(door)) {
           doorLocked = true;
           break;
         }
@@ -199,26 +170,15 @@ internal static partial class Program
     return reachableKeys;
   }
 
-  private static void GetStepsBetweenKeys(
-      char[,] map,
-      (int, int) position,
-      int steps,
-      string doors,
-      Dictionary<string, int> statesCache,
-      Dictionary<char, (int Steps, string DoorsBetween)> reachableKeys
-  )
+  private static void GetStepsBetweenKeys(char[,] map, (int, int) position, int steps, string doors, Dictionary<(int, int), int> cachedState, StepsToKey reachableKeys)
   {
-    var (r, c) = position;
-    string state = $"{r},{c}";
-
-    if (statesCache.ContainsKey(state) && steps >= statesCache[state]) {
+    if (cachedState.ContainsKey(position) && steps >= cachedState[position])
       return;
-    }
-    statesCache[state] = steps;
+    cachedState[position] = steps;
 
-    if (char.IsLower(map[r, c])) {
+    var (r, c) = position;
+    if (char.IsLower(map[r, c]))
       reachableKeys[map[r, c]] = (steps, doors.ToLower());
-    }
 
     steps++;
     foreach (var (dr, dc) in _directions) {
@@ -226,21 +186,20 @@ internal static partial class Program
 
       if (nr >= 0 && nr < _mapHeight && nc >= 0 && nc < _mapWidth && map[nr, nc] != '#') {
         string newDoors = doors;
-        if (char.IsUpper(map[nr, nc])) {
+        if (char.IsUpper(map[nr, nc]))
           newDoors += map[nr, nc];
-        }
 
-        GetStepsBetweenKeys(map, (nr, nc), steps, newDoors, statesCache, reachableKeys);
+        GetStepsBetweenKeys(map, (nr, nc), steps, newDoors, cachedState, reachableKeys);
       }
     }
   }
 
-  private static string StringifyState(string remainingKeys, int currentRobot, List<(int, int)> robots)
+  private static string CacheKey(string foundKeys, int currentRobot, (int, int)[] robots)
   {
-    return $"({remainingKeys}),({currentRobot}),({string.Join(",", robots.ToArray())})";
+    return $"({foundKeys}),({currentRobot}),({string.Join(",", robots)})";
   }
 
-  private static List<(int r, int c)> AlterMap(char[,] map, (int r, int c) start)
+  private static (int r, int c)[] AlterMap(char[,] map, (int r, int c) start)
   {
     var (r, c) = start;
     map[r - 1, c - 1] = '@';
@@ -253,7 +212,7 @@ internal static partial class Program
     map[r + 1, c] = '#';
     map[r + 1, c + 1] = '@';
 
-    return new List<(int, int)>([(r - 1, c - 1), (r - 1, c + 1), (r + 1, c + 1), (r + 1, c - 1)]);
+    return [(r - 1, c - 1), (r - 1, c + 1), (r + 1, c + 1), (r + 1, c - 1)];
   }
 
   private static (char[,] map, (int r, int c) start) ProcessData(string[] data)
@@ -280,7 +239,6 @@ internal static partial class Program
   private class Keys()
   {
     private List<char> _keys = [];
-    private List<(char, int)> _unsortedKeys = [];
     private int _depth = 0;
     private string _strKeys = ""; // used for ToString(). Called many times.
 
@@ -288,7 +246,6 @@ internal static partial class Program
     internal void Add(char key, int depth = 0)
     {
       if (!_keys.Contains(key)) {
-        _unsortedKeys.Add((key, depth));
         _keys.Add(key);
         _keys.Sort();
         _strKeys = string.Join("", _keys);
@@ -296,7 +253,6 @@ internal static partial class Program
       }
     }
     internal List<char> Items => _keys;
-    internal List<(char, int)> UnsortedItems => _unsortedKeys;
     internal bool Contains(char key) => _keys.Contains(key);
     internal bool Contains(Keys keys)
     {
@@ -309,7 +265,6 @@ internal static partial class Program
     internal Keys Clone()
     {
       var clone = new Keys() {
-        _unsortedKeys = _unsortedKeys.ToList(),
         _keys = _keys.ToList(),
         _strKeys = _strKeys,
         _depth = _depth
