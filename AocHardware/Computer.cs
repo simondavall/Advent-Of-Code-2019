@@ -13,7 +13,7 @@ public class Computer {
   private readonly List<long> _output = [];
 
   private Computer(long[] ram, long ip, long relativeBaseOffset, bool isAwaitingInput, int inputMode) {
-    Array.Copy(ram, _ram, ram.Length);
+    Buffer.BlockCopy(ram, 0, _ram, 0, ram.Length * sizeof(long));
     _ip = ip;
     _relativeBaseOffset = relativeBaseOffset;
     _isAwaitingInput = isAwaitingInput;
@@ -24,7 +24,7 @@ public class Computer {
     Debug.Assert(program.Length < MAX_RAM, $"Out Of Memory. Program is too large, get some more RAM. Size:{program.Length}");
     _ip = 0;
     _relativeBaseOffset = 0;
-    Array.Copy(program, _ram, program.Length);
+    Buffer.BlockCopy(program, 0, _ram, 0, program.Length * sizeof(long));
   }
 
   public Computer Clone() {
