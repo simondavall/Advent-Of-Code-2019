@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using AocHelper;
-using Spacecraft;
 
 namespace Day07;
 

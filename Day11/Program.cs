@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using AocHelper;
-using Spacecraft;
+using AocHardware;
 
 namespace Day11;
 
@@ -14,7 +14,7 @@ internal static partial class Program {
   private static (int dx, int dy)[] Directions = [(0, -1), (1, 0), (0, 1), (-1, 0)];
 
   private static long PartOne(long[] program) {
-    var computer = new IntcodeComputer(program);
+    var computer = new Computer(program);
     var map = new Dictionary<(int x, int y), long>();
     (int x, int y) curPos = (0, 0);
     var curDir = 0;
@@ -38,7 +38,7 @@ internal static partial class Program {
   }
 
   private static long PartTwo(long[] program) {
-    var computer = new IntcodeComputer(program);
+    var computer = new Computer(program);
     var map = new Dictionary<(int x, int y), long>();
     (int x, int y) curPos = (0, 0);
     map[curPos] = 1; // start with a white panel

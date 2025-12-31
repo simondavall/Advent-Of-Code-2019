@@ -1,4 +1,4 @@
-﻿using Spacecraft;
+﻿using AocHardware;
 
 namespace Day09;
 
@@ -10,7 +10,7 @@ internal static partial class Program {
   private const long ExpectedPartTwo = 86025;
 
   private static long PartOne(long[] program) {
-    var computer = new IntcodeComputer(program);
+    var computer = new Computer(program);
 
     while (!computer.IsHalted) {
       if (computer.IsAwaitingInput) {
@@ -23,7 +23,7 @@ internal static partial class Program {
   }
 
   private static long PartTwo(long[] program) {
-    var computer = new IntcodeComputer(program);
+    var computer = new Computer(program);
 
     while (!computer.IsHalted) {
       if (computer.IsAwaitingInput) {

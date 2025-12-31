@@ -1,5 +1,5 @@
 ﻿using AocHelper;
-using Spacecraft;
+using AocHardware;
 
 namespace Day07;
 
@@ -17,7 +17,7 @@ internal static partial class Program {
       long lastOutput = 0;
       bool phaseInput = true;
       for (var i = 0; i < 5; i++) {
-        var amp = new IntcodeComputer(program);
+        var amp = new Computer(program);
         while (!amp.IsHalted) {
           if (amp.IsAwaitingInput) {
             if (phaseInput)
@@ -42,9 +42,9 @@ internal static partial class Program {
     foreach (var phase in GetPhasingSequences(5, 9)) {
       bool[] phaseInput = Helper.CreateArray(5, true);
 
-      var amps = new IntcodeComputer[5];
+      var amps = new Computer[5];
       for (var i = 0; i < 5; i++)
-        amps[i] = new IntcodeComputer(program);
+        amps[i] = new Computer(program);
 
       var cur = 0;
       while (!amps[4].IsHalted) {

@@ -1,4 +1,4 @@
-﻿using Spacecraft;
+﻿using AocHardware;
 
 namespace Day02;
 
@@ -10,7 +10,7 @@ internal static partial class Program {
   private const long ExpectedPartTwo = 3951;
 
   private static long PartOne(long[] program) {
-    var computer = new IntcodeComputer(program);
+    var computer = new Computer(program);
     computer.SetMemory(1, 12);
     computer.SetMemory(2, 2);
     while (!computer.IsHalted) {
@@ -25,12 +25,12 @@ internal static partial class Program {
 
   private static long PartTwo(long[] program) {
     long result = 0;
-    IntcodeComputer computer;
+    Computer computer;
 
     bool terminated = false;
     for (int noun = 0; noun < 100; noun++) {
       for (int verb = 0; verb < 100; verb++) {
-        computer = new IntcodeComputer(program);
+        computer = new Computer(program);
         computer.SetMemory(1, noun);
         computer.SetMemory(2, verb);
         while (!computer.IsHalted) {

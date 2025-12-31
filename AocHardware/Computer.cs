@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics;
 
-namespace Spacecraft;
+namespace AocHardware;
 
-public class IntcodeComputer {
+public class Computer {
   private long _ip;
   private long _relativeBaseOffset;
   private const int MAX_RAM = 10_000;
@@ -12,7 +12,7 @@ public class IntcodeComputer {
   private int _inputMode;
   private readonly List<long> _output = [];
 
-  private IntcodeComputer(long[] ram, long ip, long relativeBaseOffset, bool isAwaitingInput, int inputMode) {
+  private Computer(long[] ram, long ip, long relativeBaseOffset, bool isAwaitingInput, int inputMode) {
     Array.Copy(ram, _ram, ram.Length);
     _ip = ip;
     _relativeBaseOffset = relativeBaseOffset;
@@ -20,15 +20,15 @@ public class IntcodeComputer {
     _inputMode = inputMode;
   }
 
-  public IntcodeComputer(long[] program) {
+  public Computer(long[] program) {
     Debug.Assert(program.Length < MAX_RAM, $"Out Of Memory. Program is too large, get some more RAM. Size:{program.Length}");
     _ip = 0;
     _relativeBaseOffset = 0;
     Array.Copy(program, _ram, program.Length);
   }
 
-  public IntcodeComputer Clone() {
-    return new IntcodeComputer(_ram, _ip, _relativeBaseOffset, _isAwaitingInput, _inputMode);
+  public Computer Clone() {
+    return new Computer(_ram, _ip, _relativeBaseOffset, _isAwaitingInput, _inputMode);
   }
 
   public void Execute() {

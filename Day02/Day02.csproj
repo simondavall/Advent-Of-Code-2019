@@ -10,7 +10,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\AocHelper\AocHelper.csproj" />
-      <ProjectReference Include="..\Spacecraft\Spacecraft.csproj" />
+      <ProjectReference Include="..\AocHardware\AocHardware.csproj" />
     </ItemGroup>
 
     <PropertyGroup>

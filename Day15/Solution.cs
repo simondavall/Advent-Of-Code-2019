@@ -1,4 +1,4 @@
-﻿using Spacecraft;
+﻿using AocHardware;
 
 namespace Day15;
 
@@ -6,7 +6,7 @@ internal static partial class Program {
   private static (int dx, int dy)[] Directions = [(0, -1), (0, 1), (-1, 0), (1, 0)];
 
   private static long PartOne(long[] program) {
-    var computer = new IntcodeComputer(program);
+    var computer = new Computer(program);
     while(!computer.IsAwaitingInput){
       computer.Execute();
     }
@@ -14,13 +14,13 @@ internal static partial class Program {
     var start = ((0, 0), computer);
 
     var seen = new HashSet<(int, int)>();
-    var q = new PriorityQueue<((int x, int y), IntcodeComputer), int>();
+    var q = new PriorityQueue<((int x, int y), Computer), int>();
     q.Enqueue(start, 0);
     seen.Add((0,0));
 
     while (q.Count > 0) {
       if (!q.TryDequeue(out var position, out int depth)) throw new ApplicationException("Queue was empty");
-      (var cur, IntcodeComputer ic) = position;
+      (var cur, Computer ic) = position;
       if(ic.IsHalted || !ic.IsAwaitingInput) 
         throw new ApplicationException("Computer in unexpected state");
       
@@ -53,7 +53,7 @@ internal static partial class Program {
   }
 
   private static long PartTwo(long[] program) {
-    var computer = new IntcodeComputer(program);
+    var computer = new Computer(program);
     while(!computer.IsAwaitingInput){
       computer.Execute();
     }
@@ -62,14 +62,14 @@ internal static partial class Program {
     var maxDepth = 0;
 
     var seen = new HashSet<(int, int)>();
-    var q = new PriorityQueue<((int x, int y), IntcodeComputer), int>();
+    var q = new PriorityQueue<((int x, int y), Computer), int>();
     q.Enqueue(start, 0);
     seen.Add((0,0));
 
     while (q.Count > 0) {
       if (!q.TryDequeue(out var position, out int depth)) throw new ApplicationException("Queue was empty");
       maxDepth = Math.Max(maxDepth, depth);
-      (var cur, IntcodeComputer ic) = position;
+      (var cur, Computer ic) = position;
       if(ic.IsHalted || !ic.IsAwaitingInput) 
         throw new ApplicationException("Computer in unexpected state");
       

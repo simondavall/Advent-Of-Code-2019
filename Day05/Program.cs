@@ -1,5 +1,5 @@
 ﻿using AocHelper;
-using Spacecraft;
+using AocHardware;
 
 namespace Day05;
 
@@ -11,7 +11,7 @@ internal static partial class Program {
   private const long ExpectedPartTwo = 14195011;
 
  private static long PartOne(long[] program) {
-    var computer = new IntcodeComputer(program);
+    var computer = new Computer(program);
     while (!computer.IsHalted) {
       if (computer.IsAwaitingInput) {
         computer.SetInput(1);
@@ -26,7 +26,7 @@ internal static partial class Program {
   }
 
   private static long PartTwo(long[] program) {
-    var computer = new IntcodeComputer(program);
+    var computer = new Computer(program);
     while (!computer.IsHalted) {
       if (computer.IsAwaitingInput) {
         computer.SetInput(5);

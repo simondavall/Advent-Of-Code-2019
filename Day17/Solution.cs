@@ -1,4 +1,4 @@
-﻿using Spacecraft;
+﻿using AocHardware;
 
 namespace Day17;
 
@@ -11,7 +11,7 @@ internal static partial class Program {
   private static readonly (char ch, int dx, int dy)[] _directions = [ ('^', 0, -1),('>', 1, 0),('v', 0, 1),('<', -1, 0)];
 
   private static long PartOne(long[] program) {
-    var computer = new IntcodeComputer(program);
+    var computer = new Computer(program);
     computer.Execute();
 
     var (grid, width, height, _) = GetGrid(computer.GetOutput());
@@ -53,7 +53,7 @@ internal static partial class Program {
   }
 
  private static long PartTwo(long[] program) {
-    var computer = new IntcodeComputer(program);
+    var computer = new Computer(program);
     computer.Execute();
 
     var (grid, width, height, start) = GetGrid(computer.GetOutput());
@@ -115,7 +115,7 @@ internal static partial class Program {
     var videoFeed = "n\n"; // set this to y and uncomment lines 136-138 to see video output in console
     var instructions = new Queue<long>($"{main}{functionA}{functionB}{functionC}{videoFeed}".ToLongArray());
 
-    computer = new IntcodeComputer(program);
+    computer = new Computer(program);
     long[] output = [];
     while (!computer.IsHalted) {
       if (computer.IsAwaitingInput) {
