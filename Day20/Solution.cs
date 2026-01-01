@@ -191,16 +191,16 @@ internal static partial class Program
       hasChanged = false;
       for (var y = 0; y < height; y++) {
         for (var x = 0; x < width; x++) {
-          if (map[y][x] == '.') {
-            int wallCount = 0;
-            foreach (var (dx, dy) in _directions) {
-              if (map[y + dy][x + dx] == '#')
-                wallCount++;
-            }
-            if (wallCount >= 3) {
-              map[y][x] = '#';
-              hasChanged = true;
-            }
+          if (map[y][x] != '.')
+            continue;
+          int wallCount = 0;
+          foreach (var (dx, dy) in _directions) {
+            if (map[y + dy][x + dx] == '#')
+              wallCount++;
+          }
+          if (wallCount >= 3) {
+            map[y][x] = '#';
+            hasChanged = true;
           }
         }
       }
