@@ -52,6 +52,11 @@ internal static partial class Program
     var height = map.Length;
     var width = map[0].Length;
 
+    // this optimization doctors the map to remove all the dead ends and
+    // leave only the paths between portals. It's not really needed, but it 
+    // makes the solution ~50% faster.
+    OptimizeMap(map);
+
     var (start, end, portals) = GetPortals(map);
 
     var seen = new HashSet<(int, int, int)>();
@@ -147,6 +152,7 @@ internal static partial class Program
     foreach (var (name, locations) in portalLocations) {
       if (locations.Count() != 2)
         throw new ApplicationException($"Expected 2 locations, found:{locations.Count()} for portal:{name}");
+      // add portals in both directions
       portals.Add(locations[0], locations[1]);
       portals.Add(locations[1], locations[0]);
     }
@@ -173,5 +179,32 @@ internal static partial class Program
   private static bool IsInBounds(int x, int y, int height, int width)
   {
     return 0 <= x && x < width && 0 <= y && y < height;
+  }
+
+  private static void OptimizeMap(char[][] map)
+  {
+    var height = map.Length;
+    var width = map[0].Length;
+
+    var hasChanged = true;
+    while (hasChanged) {
+      hasChanged = false;
+      for (var y = 0; y < height; y++) {
+        for (var x = 0; x < width; x++) {
+          if (map[y][x] == '.') {
+            int wallCount = 0;
+            foreach (var (dx, dy) in _directions) {
+              var (nx, ny) = (x + dx, y + dy);
+              if (map[y + dy][x + dx] == '#')
+                wallCount++;
+            }
+            if (wallCount >= 3) {
+              map[y][x] = '#';
+              hasChanged = true;
+            }
+          }
+        }
+      }
+    }
   }
 }
