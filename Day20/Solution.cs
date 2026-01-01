@@ -194,7 +194,6 @@ internal static partial class Program
           if (map[y][x] == '.') {
             int wallCount = 0;
             foreach (var (dx, dy) in _directions) {
-              var (nx, ny) = (x + dx, y + dy);
               if (map[y + dy][x + dx] == '#')
                 wallCount++;
             }
