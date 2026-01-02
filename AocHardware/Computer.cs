@@ -11,6 +11,7 @@ public class Computer {
   private bool _isAwaitingInput = false;
   private int _inputMode;
   private readonly List<long> _output = [];
+  private long _cycles = 0;
 
   private Computer(long[] ram, long ip, long relativeBaseOffset, bool isAwaitingInput, int inputMode) {
     Buffer.BlockCopy(ram, 0, _ram, 0, ram.Length * sizeof(long));
@@ -36,6 +37,7 @@ public class Computer {
       Debug.Assert(_ip < _ram.Length && _ip >= 0, $"Instruction pointer is out of bounds. Terminaling program. Ip:{_ip}");
 
       var (opCode, modes) = GetNextOpCode();
+      _cycles++;
       switch (opCode) {
         case 1:
           Add(modes);
@@ -108,6 +110,8 @@ public class Computer {
     _output.Clear();
     return output;
   }
+
+  public long Cycles => _cycles;
 
   public bool IsHalted => _isHalted;
 
