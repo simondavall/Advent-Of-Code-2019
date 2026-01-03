@@ -1,12 +1,8 @@
 # Advent of Code 2025 #
-## Day 0: Replace Me ##
-https://adventofcode.com/2019/day/1
+## Day 22: Slam Shuffle ##
+https://adventofcode.com/2019/day/22
 
-Part 1\
-Result: 0\
-Time elapsed (ms): 0.0000
+File: input.txt
 
-Part 2\
-Result: 0\
-Time elapsed (ms): 0.0000
-
+Part 1 Result: 6696 in 7.5805ms\
+Part 2 Result: 93750418158025 in 67.0648ms
