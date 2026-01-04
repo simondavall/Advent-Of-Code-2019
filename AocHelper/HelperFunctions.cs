@@ -190,6 +190,33 @@ public static class Helper
     Console.WriteLine();
   }
 
+  public static void VarDump(char[][] arr, params string[] p){
+    VarDumpNonNumeric(arr, p); //calling with type:char
+  }
+
+  private static void VarDumpNonNumeric<T>(T[][] arr, params string[] p)
+  {
+    var len = arr.Length;
+    int idxLen = len.ToString().Length;
+    if (p.Contains("-np")) { // no padding
+      for (var i = 0; i < len; i++) {
+        for (var j = 0; j < arr[i].Length; j++) {
+          Console.Write($"\u001b[32m{arr[i][j]}\u001b[0m");
+        }
+        Console.Write("\n");
+      }
+    } else {
+      for (var i = 0; i < len; i++) {
+        PaddedString("[", i.ToString(), '0', idxLen, "] = [");
+        for (var j = 0; j < arr[i].Length; j++) {
+          Console.Write($"\u001b[32m{arr[i][j]}\u001b[0m, ");
+        }
+        Console.Write("\b\b]\n");
+      }
+    }
+    Console.WriteLine();
+  }
+
   public static void VarDump<T>(T[][] arr, params string[] p) where T : INumber<T>
   {
     var len = arr.Length;
