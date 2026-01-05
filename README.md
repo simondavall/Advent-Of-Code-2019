@@ -1,6 +1,8 @@
 # Advent Of Code 2019 #
 Advent of Code 2019 written using C# (.Net 10.0)
 
+<img src="./Assets/Aoc2019.png" alt="Christmas is on track!!" width="600" />
+
 ### To run all 25 days: ###
 1. Install .Net 10.0 sdk/runtime.
 2. Navigate to the project root.
