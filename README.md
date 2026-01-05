@@ -14,10 +14,12 @@ The results will be displayed in the terminal window, with execution timings for
 ### To run an individual day: ###
 1. Install .Net 10.0 sdk/runtime.
 2. Navigate to the day (e.g. /Day01)
-3. Execute the make file build and run: 
+3. Execute the make file to build (Debug mode) and run: 
 ```bash
 make
 ```
+Individual days are built and run in Debug mode to trigger assert statements that are not available in Release mode.
+
 
 # All results with execution timings #
 
