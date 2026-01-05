@@ -8,7 +8,7 @@ Advent of Code 2019 written using C# (.Net 10.0)
 ```bash
 make
 ```
-This should build all days' projects in Rerlease mode, and execute them.
+This should build all days' projects in Release mode, and execute them.
 The results will be displayed in the terminal window, with execution timings for each.
 
 ### To run an individual day: ###
