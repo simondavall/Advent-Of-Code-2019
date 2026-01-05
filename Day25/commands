@@ -1,0 +1,44 @@
+north
+east
+take coin
+west
+south
+south
+take food ration
+west
+take sand
+north
+north
+east
+take astrolabe
+west
+south
+south
+east
+north
+east
+take cake
+south
+take weather machine
+west
+take ornament
+west
+take jam
+east
+east
+north
+east
+east
+east
+inv
+drop coin
+#drop food ration
+drop sand
+#drop astrolabe
+drop cake
+#drop weather machine
+#drop ornament
+drop jam
+inv
+south
+
