@@ -1,11 +1,13 @@
 ﻿using AocHardware;
+using AocHelper;
 
 namespace Day15;
 
 internal static partial class Program {
   private static (int dx, int dy)[] Directions = [(0, -1), (0, 1), (-1, 0), (1, 0)];
 
-  private static long PartOne(long[] program) {
+  private static long PartOne(string input) {
+    var program = input.Split(',', StringSplitOptions.RemoveEmptyEntries).ToLongArray();
     var computer = new Computer(program);
     while(!computer.IsAwaitingInput){
       computer.Execute();
@@ -36,15 +38,12 @@ internal static partial class Program {
           var output = nComputer.GetOutput();
           if (output.Length == 0)
             throw new ApplicationException("Expected computer output");
-          if (output[0] == 0){
+          if (output[0] == 0)
             continue; // hit a wall, cannot continue
-          }
-          else if (output[0] == 1){
+          else if (output[0] == 1)
             q.Enqueue((next, nComputer), depth + 1); // can proceed, add point to queue with increased depth
-          }
-          else if (output[0] == 2){
+          else if (output[0] == 2)
             return depth + 1; // found oxygen tank, so display path
-          }
         }
       }
     }
@@ -52,7 +51,8 @@ internal static partial class Program {
     return -1;
   }
 
-  private static long PartTwo(long[] program) {
+  private static long PartTwo(string input) {
+    var program = input.Split(',', StringSplitOptions.RemoveEmptyEntries).ToLongArray();
     var computer = new Computer(program);
     while(!computer.IsAwaitingInput){
       computer.Execute();
@@ -85,12 +85,10 @@ internal static partial class Program {
           var output = nComputer.GetOutput();
           if (output.Length == 0)
             throw new ApplicationException("Expected computer output");
-          if (output[0] == 0){
+          if (output[0] == 0)
             continue; // hit a wall, cannot continue
-          }
-          else if (output[0] == 1){
+          else if (output[0] == 1)
             q.Enqueue((next, nComputer), depth + 1); // can proceed, add point to queue with increased depth
-          }
           else if (output[0] == 2){
             q.Clear();
             q.Enqueue((next, nComputer), 0);

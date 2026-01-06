@@ -17,8 +17,9 @@ internal static partial class Program
   private static int _mapHeight;
   private static int _mapWidth;
 
-  private static long PartOne(string[] data)
+  private static long PartOne(string input)
   {
+    var data = input.Split('\n', StringSplitOptions.RemoveEmptyEntries);
     var (map, start) = ProcessData(data);
     map[start.r, start.c] = '.';
 
@@ -58,8 +59,9 @@ internal static partial class Program
     return -1;
   }
 
-  private static long PartTwo(string[] data)
+  private static long PartTwo(string input)
   {
+    var data = input.Split('\n', StringSplitOptions.RemoveEmptyEntries);
     var (map, start) = ProcessData(data);
 
     int minSteps = int.MaxValue;

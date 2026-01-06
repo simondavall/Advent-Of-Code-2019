@@ -1,6 +1,9 @@
-﻿namespace Day16;
+﻿using System.Diagnostics;
 
-internal static partial class Program {
+namespace Day16;
+
+internal static partial class Program
+{
   private const string Title = "\n## Day 16: Flawed Frequency Transmission ##";
   private const string AdventOfCode = "https://adventofcode.com/2019/day/16";
   private const string ExpectedPartOne = "82525123";
@@ -8,7 +11,9 @@ internal static partial class Program {
 
   private static readonly int[] _basePattern = new int[] { 0, 1, 0, -1 };
 
-  public static string PartOne(int[] signal) {
+  public static string PartOne(string input)
+  {
+    int[] signal = GetSignals(input).First();
     int phases = 100;
     Dictionary<int, int> output = [];
     for (int i = 0; i < signal.Length; i++) {
@@ -35,7 +40,9 @@ internal static partial class Program {
     return string.Join("", output.Values.Take(8));
   }
 
-  public static string PartTwo(int[] signal) {
+  public static string PartTwo(string input)
+  {
+    int[] signal = GetSignals(input).Last();
     int phases = 100;
 
     int extLength = signal.Length * 10_000;
@@ -77,8 +84,9 @@ internal static partial class Program {
 
   private static Dictionary<(int, int), Dictionary<int, int>> cachedPatterns = [];
 
-  private static Dictionary<int, int> GetPattern(int position, int signalLength) {
-    if (cachedPatterns.TryGetValue((position, signalLength), out var cachedValue)){
+  private static Dictionary<int, int> GetPattern(int position, int signalLength)
+  {
+    if (cachedPatterns.TryGetValue((position, signalLength), out var cachedValue)) {
       return cachedValue;
     }
     var pattern = new Dictionary<int, int>();
@@ -86,7 +94,7 @@ internal static partial class Program {
     int index = 0, baseIndex = 0;
     while (index <= signalLength) {
       for (int i = 0; i < position; i++) {
-        if (index > signalLength){
+        if (index > signalLength) {
           break;
         }
 
@@ -101,4 +109,21 @@ internal static partial class Program {
     cachedPatterns[(position, signalLength)] = pattern;
     return pattern;
   }
+
+  private static List<int[]> GetSignals(string input)
+  {
+    var lines = input.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+    List<int[]> signals = [];
+    foreach (var line in lines) {
+      var chars = line.ToCharArray();
+      var signal = new int[chars.Length];
+      for (var i = 0; i < chars.Length; i++) {
+        signal[i] = chars[i] - '0';
+      }
+      signals.Add(signal);
+    }
+    Debug.Assert(signals.Count == 2, $"Expected 2 sets of data, Found: {signals.Count}");
+    return signals;
+  }
+
 }

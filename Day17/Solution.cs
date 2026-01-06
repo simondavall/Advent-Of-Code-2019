@@ -1,4 +1,5 @@
 ﻿using AocHardware;
+using AocHelper;
 
 namespace Day17;
 
@@ -10,7 +11,8 @@ internal static partial class Program {
 
   private static readonly (char ch, int dx, int dy)[] _directions = [ ('^', 0, -1),('>', 1, 0),('v', 0, 1),('<', -1, 0)];
 
-  private static long PartOne(long[] program) {
+  private static long PartOne(string input) {
+    long[] program = input.Split(',', StringSplitOptions.RemoveEmptyEntries).ToLongArray();
     var computer = new Computer(program);
     computer.Execute();
 
@@ -38,21 +40,11 @@ internal static partial class Program {
         isIntersection = true;
       }
     }
-
-    // Print grid with intersections highlighted
-    Console.WriteLine();
-    foreach (var r in grid) {
-      foreach (var ch in r) {
-        Console.Write(ch);
-      }
-      Console.WriteLine();
-    }
-    Console.WriteLine();
-
     return tally;
   }
 
- private static long PartTwo(long[] program) {
+ private static long PartTwo(string input) {
+    long[] program = input.Split(',', StringSplitOptions.RemoveEmptyEntries).ToLongArray();
     var computer = new Computer(program);
     computer.Execute();
 
@@ -102,11 +94,10 @@ internal static partial class Program {
       break;
     }
 
-    Console.WriteLine($"\nInstructions: {string.Join(",", directions)}\n");
-
     program[0] = 2;
 
-    // The following were found by observing the directions output above.
+    //Console.WriteLine($"\nInstructions: {string.Join(",", directions)}\n");
+    // The following were found by observing the 'Instructions' output above.
 
     var main = "A,A,B,C,B,A,C,B,C,A\n";
     var functionA = "L,6,R,12,L,6,L,8,L,8\n";
@@ -124,9 +115,6 @@ internal static partial class Program {
       }
       computer.Execute();
       output = computer.GetOutput();
-      // foreach (var ch in output) {
-      //   Console.Write((char)ch);
-      // }
     }
 
     return output[^1];

@@ -13,24 +13,22 @@ internal static partial class Program {
 
     foreach (var filePath in args) {
       Console.WriteLine($"\nFile: {filePath}\n");
-      long[] program = GetData(filePath);
+      string input = GetData(filePath);
       var stopwatch = Stopwatch.StartNew();
 
-      resultPartOne = PartOne(program);
+      resultPartOne = PartOne(input);
       PrintResult("1", resultPartOne.ToString(), stopwatch);
 
-      resultPartTwo = PartTwo(program);
+      resultPartTwo = PartTwo(input);
       PrintResult("2", resultPartTwo.ToString(), stopwatch);
     }
 
     return resultPartOne == ExpectedPartOne && resultPartTwo == ExpectedPartTwo ? 0 : 1;
   }
 
-  private static long[] GetData(string filePath) {
+  private static string GetData(string filePath) {
     using var streamReader = new StreamReader(filePath);
-    var data = streamReader.ReadToEnd().Split(',', StringSplitOptions.RemoveEmptyEntries).ToLongArray();
-
-    return data;
+    return streamReader.ReadToEnd();
   }
 
   private static void PrintResult(string partNo, string result, Stopwatch sw) {

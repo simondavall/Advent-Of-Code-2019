@@ -25,10 +25,9 @@ internal static partial class Program {
     return resultPartOne == ExpectedPartOne && resultPartTwo == ExpectedPartTwo ? 0 : 1;
   }
 
-  private static string[] GetData(string filePath) {
+  private static string GetData(string filePath) {
     using var streamReader = new StreamReader(filePath);
-    var data = streamReader.ReadToEnd().Split('\n', StringSplitOptions.RemoveEmptyEntries);
-    return data;
+    return streamReader.ReadToEnd();
   }
 
   private static void PrintResult(string partNo, string result, Stopwatch sw) {
