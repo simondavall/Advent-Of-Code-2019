@@ -3,4 +3,4 @@ INPUTS=input.txt
 .PHONY: test
 
 test: Program.cs $(INPUTS)
-	dotnet build -c Debug && ./bin/Debug/net10.0/Day19 $(INPUTS)
+	dotnet build -c Debug && ./bin/Debug/net10.0/$(CURDIR) $(INPUTS)
