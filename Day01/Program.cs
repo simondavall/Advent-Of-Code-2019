@@ -1,37 +1,38 @@
-﻿namespace Day01;
+using System.Diagnostics;
+
+namespace Day01;
 
 internal static partial class Program {
-  private const string Title = "\n## Day 1: The Tyranny of the Rocket Equation ##";
-  private const string AdventOfCode = "https://adventofcode.com/2019/day/1";
+  public static int Main(string[] args) {
+    Console.WriteLine(Title);
+    Console.WriteLine(AdventOfCode);
 
-  private const long ExpectedPartOne = 3226822;
-  private const long ExpectedPartTwo = 4837367;
+    long resultPartOne = -1;
+    long resultPartTwo = -1;
 
-  private static long PartOne(int[] modules) {
-    long tally = 0;
+    foreach (var filePath in args) {
+      Console.WriteLine($"\nFile: {filePath}\n");
+      var input = GetData(filePath);
+      var stopwatch = Stopwatch.StartNew();
 
-    for (int i = 0; i < modules.Length; i++)
-      tally += modules[i] / 3 - 2;
+      resultPartOne = PartOne(input);
+      PrintResult("1", resultPartOne.ToString(), stopwatch);
 
-    return tally;
-  }
-
-  private static long PartTwo(int[] modules) {
-    long tally = 0;
-
-    for (int i = 0; i < modules.Length; i++) {
-      var m = modules[i];
-
-      while (true) {
-        var fuel = m / 3 - 2;
-        if (fuel <= 0)
-          break;
-
-        tally += fuel;
-        m = fuel;
-      }
+      resultPartTwo = PartTwo(input);
+      PrintResult("2", resultPartTwo.ToString(), stopwatch);
     }
 
-    return tally;
+    return resultPartOne == ExpectedPartOne && resultPartTwo == ExpectedPartTwo ? 0 : 1;
   }
-}
+
+  private static string GetData(string filePath) {
+    using var streamReader = new StreamReader(filePath);
+    return streamReader.ReadToEnd();
+  }
+
+  private static void PrintResult(string partNo, string result, Stopwatch sw) {
+    sw.Stop();
+    Console.WriteLine($"Part {partNo} Result: {result} in {sw.Elapsed.TotalMilliseconds}ms");
+    sw.Restart();
+  }
+} 

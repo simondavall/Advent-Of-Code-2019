@@ -1,39 +1,44 @@
-﻿using AocHelper;
-using AocHardware;
+using System.Diagnostics;
 
 namespace Day05;
 
-internal static partial class Program {
-  private const string Title = "\n## Day 5: Sunny with a Chance of Asteroids ##";
-  private const string AdventOfCode = "https://adventofcode.com/2019/day/5";
+internal static partial class Program
+{
+  public static int Main(string[] args)
+  {
+    Console.WriteLine(Title);
+    Console.WriteLine(AdventOfCode);
 
- private const long ExpectedPartOne = 10987514;
-  private const long ExpectedPartTwo = 14195011;
+    long resultPartOne = -1;
+    long resultPartTwo = -1;
 
- private static long PartOne(long[] program) {
-    var computer = new Computer(program);
-    while (!computer.IsHalted) {
-      if (computer.IsAwaitingInput) {
-        computer.SetInput(1);
-      }
-      computer.Execute();
+    foreach (var filePath in args)
+    {
+      Console.WriteLine($"\nFile: {filePath}\n");
+      string program = GetData(filePath);
+      var stopwatch = Stopwatch.StartNew();
+
+      resultPartOne = PartOne(program);
+      PrintResult("1", resultPartOne.ToString(), stopwatch);
+
+      resultPartTwo = PartTwo(program);
+      PrintResult("2", resultPartTwo.ToString(), stopwatch);
     }
 
-    var output = computer.GetOutput();
-    Console.WriteLine($"Full output: {output.Print()}");
-
-    return output[^1];
+    Console.WriteLine();
+    return resultPartOne == ExpectedPartOne && resultPartTwo == ExpectedPartTwo ? 0 : 1;
   }
 
-  private static long PartTwo(long[] program) {
-    var computer = new Computer(program);
-    while (!computer.IsHalted) {
-      if (computer.IsAwaitingInput) {
-        computer.SetInput(5);
-      }
-      computer.Execute();
-    }
+  private static string GetData(string filePath)
+  {
+    using var streamReader = new StreamReader(filePath);
+    return streamReader.ReadToEnd();
+  }
 
-    return computer.GetOutput()[^1];
+  private static void PrintResult(string partNo, string result, Stopwatch sw)
+  {
+    sw.Stop();
+    Console.WriteLine($"Part {partNo} Result: {result} in {sw.Elapsed.TotalMilliseconds}ms");
+    sw.Restart();
   }
 }
