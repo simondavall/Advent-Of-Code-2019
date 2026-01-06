@@ -1,7 +1,7 @@
 # Advent Of Code 2019 #
 Advent of Code 2019 written using C# (.Net 10.0)
 
-<img src="./Assets/Aoc2019.png" alt="Christmas is on track!!" width="600" />
+<img src="./Aoc2019.png" alt="Christmas is on track!!" width="600" />
 
 ### To run all 25 days: ###
 1. Install .Net 10.0 sdk/runtime.
@@ -10,7 +10,11 @@ Advent of Code 2019 written using C# (.Net 10.0)
 ```bash
 make
 ```
-This should build all days' projects in Release mode, and execute them.
+or directly from the root using 
+```bash
+cd Aoc && dotnet build -c Release && ./bin/Release/net10.0/Aoc
+```
+This will build all days' projects in Release mode, and execute them.
 The results will be displayed in the terminal window, with execution timings for each.
 
 ### To run an individual day: ###
@@ -19,6 +23,10 @@ The results will be displayed in the terminal window, with execution timings for
 3. Execute the make file to build (Debug mode) and run: 
 ```bash
 make
+```
+or directly from within a day root using (change Day## to the required day. E.g Day01) 
+```bash
+dotnet build -c Debug && ./bin/Debug/net10.0/Day## input.txt
 ```
 Individual days are built and run in Debug mode to trigger assert statements that are not available in Release mode.
 
