@@ -24,9 +24,9 @@ The results will be displayed in the terminal window, with execution timings for
 ```bash
 make
 ```
-or directly from within a day root using (change Day## to the required day. E.g Day01) 
+or directly from within a day root using (change Day$$ to the required day. E.g Day01) 
 ```bash
-dotnet build -c Debug && ./bin/Debug/net10.0/Day## input.txt
+dotnet build -c Debug && ./bin/Debug/net10.0/Day$$ input.txt
 ```
 Individual days are built and run in Debug mode to trigger assert statements that are not available in Release mode.
 
