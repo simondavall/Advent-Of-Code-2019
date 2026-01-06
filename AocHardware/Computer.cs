@@ -32,6 +32,37 @@ public class Computer {
     return new Computer(_ram, _ip, _relativeBaseOffset, _isAwaitingInput, _inputMode);
   }
 
+  public long ReadMemory(long address) {
+    if (address < 0 || address >= _ram.Length)
+      return _ram.FirstOrDefault();
+
+    return _ram[address];
+  }
+
+  public void SetMemory(long address, long value) {
+    if (address >= 0 && address < _ram.Length)
+      _ram[address] = value;
+  }
+
+  public void SetInput(long value) {
+    if (_isAwaitingInput) {
+      Input(value);
+      _isAwaitingInput = false;
+    }
+  }
+
+  public long[] GetOutput() {
+    long[] output = _output.ToArray();
+    _output.Clear();
+    return output;
+  }
+
+  public long Cycles => _cycles;
+
+  public bool IsHalted => _isHalted;
+
+  public bool IsAwaitingInput => _isAwaitingInput;
+
   public void Execute() {
     while (!_isAwaitingInput && !_isHalted) {
       Debug.Assert(_ip < _ram.Length && _ip >= 0, $"Instruction pointer is out of bounds. Terminaling program. Ip:{_ip}");
@@ -86,36 +117,11 @@ public class Computer {
     }
   }
 
-  public long ReadMemory(long address) {
-    if (address < 0 || address >= _ram.Length)
-      return _ram.FirstOrDefault();
-
-    return _ram[address];
+  private enum ParamMode{
+    Position, // Value is at position supplied (e.g.) x = _ram[y];
+    Immediate, // Use the value supplied (e.g.) x = y;
+    Relative, // Value is at poistion supplied + relative base. (e.g.) x = _ram[y] + relateBase 
   }
-
-  public void SetMemory(long address, long value) {
-    if (address >= 0 && address < _ram.Length)
-      _ram[address] = value;
-  }
-
-  public void SetInput(long value) {
-    if (_isAwaitingInput) {
-      Input(value);
-      _isAwaitingInput = false;
-    }
-  }
-
-  public long[] GetOutput() {
-    long[] output = _output.ToArray();
-    _output.Clear();
-    return output;
-  }
-
-  public long Cycles => _cycles;
-
-  public bool IsHalted => _isHalted;
-
-  public bool IsAwaitingInput => _isAwaitingInput;
 
   private (int, int[]) GetNextOpCode() {
     int[] modes = new int[3];
