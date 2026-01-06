@@ -1,37 +1,39 @@
-﻿using AocHardware;
+using System.Diagnostics;
+
 
 namespace Day09;
 
 internal static partial class Program {
-  private const string Title = "\n## Day 9: Sensor Boost ##";
-  private const string AdventOfCodeUrl = "https://adventofcode.com/2019/day/9";
+  public static int Main(string[] args) {
+    Console.WriteLine(Title);
+    Console.WriteLine(AdventOfCodeUrl);
 
-  private const long ExpectedPartOne = 3638931938;
-  private const long ExpectedPartTwo = 86025;
+    long resultPartOne = -1;
+    long resultPartTwo = -1;
 
-  private static long PartOne(long[] program) {
-    var computer = new Computer(program);
+    foreach (var filePath in args) {
+      Console.WriteLine($"\nFile: {filePath}\n");
+      string input = GetData(filePath);
+      var stopwatch = Stopwatch.StartNew();
 
-    while (!computer.IsHalted) {
-      if (computer.IsAwaitingInput) {
-        computer.SetInput(1);
-      }
-      computer.Execute();
+      resultPartOne = PartOne(input);
+      PrintResult("1", resultPartOne.ToString(), stopwatch);
+
+      resultPartTwo = PartTwo(input);
+      PrintResult("2", resultPartTwo.ToString(), stopwatch);
     }
 
-    return computer.GetOutput()[^1];
+    return resultPartOne == ExpectedPartOne && resultPartTwo == ExpectedPartTwo ? 0 : 1;
   }
 
-  private static long PartTwo(long[] program) {
-    var computer = new Computer(program);
+  private static string GetData(string filePath) {
+    using var streamReader = new StreamReader(filePath);
+    return streamReader.ReadToEnd();
+  }
 
-    while (!computer.IsHalted) {
-      if (computer.IsAwaitingInput) {
-        computer.SetInput(2);
-      }
-      computer.Execute();
-    }
-
-    return computer.GetOutput()[^1];
+  private static void PrintResult(string partNo, string result, Stopwatch sw) {
+    sw.Stop();
+    Console.WriteLine($"Part {partNo} Result: {result} in {sw.Elapsed.TotalMilliseconds}ms");
+    sw.Restart();
   }
 }

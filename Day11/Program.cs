@@ -1,94 +1,38 @@
-﻿using System.Diagnostics;
-using AocHelper;
-using AocHardware;
+using System.Diagnostics;
 
 namespace Day11;
 
 internal static partial class Program {
-  private const string Title = "\n## Day 11: Space Police ##";
-  private const string AdventOfCode = "https://adventofcode.com/2019/day/11";
+  public static int Main(string[] args) {
+    Console.WriteLine(Title);
+    Console.WriteLine(AdventOfCode);
 
-  private const long ExpectedPartOne = 1885;
-  private const long ExpectedPartTwo = 0;
+    long resultPartOne = -1;
+    long resultPartTwo = -1;
 
-  private static (int dx, int dy)[] Directions = [(0, -1), (1, 0), (0, 1), (-1, 0)];
+    foreach (var filePath in args) {
+      Console.WriteLine($"\nFile: {filePath}\n");
+      string data = GetData(filePath);
+      var stopwatch = Stopwatch.StartNew();
 
-  private static long PartOne(long[] program) {
-    var computer = new Computer(program);
-    var map = new Dictionary<(int x, int y), long>();
-    (int x, int y) curPos = (0, 0);
-    var curDir = 0;
+      resultPartOne = PartOne(data);
+      PrintResult("1", resultPartOne.ToString(), stopwatch);
 
-    while (!computer.IsHalted) {
-      if (computer.IsAwaitingInput) {
-        map.TryGetValue(curPos, out var curInput);
-        computer.SetInput(curInput);
-      }
-      computer.Execute();
-      var output = computer.GetOutput();
-      if (output.Length == 2) {
-        map[(curPos.x, curPos.y)] = output[0];
-        curDir = ChangeDirection(output[1], curDir);
-        (int dx, int dy) = Directions[curDir];
-        curPos = (curPos.x + dx, curPos.y + dy);
-      }
+      resultPartTwo = PartTwo(data);
+      PrintResult("2", resultPartTwo.ToString(), stopwatch);
     }
 
-    return map.Keys.Count;
+    return resultPartOne == ExpectedPartOne && resultPartTwo == ExpectedPartTwo ? 0 : 1;
   }
 
-  private static long PartTwo(long[] program) {
-    var computer = new Computer(program);
-    var map = new Dictionary<(int x, int y), long>();
-    (int x, int y) curPos = (0, 0);
-    map[curPos] = 1; // start with a white panel
-    var curDir = 0;
-
-    while (!computer.IsHalted) {
-      if (computer.IsAwaitingInput) {
-        map.TryGetValue(curPos, out long curInput);
-        computer.SetInput(curInput);
-      }
-      computer.Execute();
-      var output = computer.GetOutput();
-
-      if (output.Length == 2) {
-        map[(curPos.x, curPos.y)] = output[0];
-        curDir = ChangeDirection(output[1], curDir);
-        (int dx, int dy) = Directions[curDir];
-        curPos = (curPos.x + dx, curPos.y + dy);
-      }
-    }
-
-    PrintPanel(map);
-    return 0;
+  private static string GetData(string filePath) {
+    using var streamReader = new StreamReader(filePath);
+    return streamReader.ReadToEnd();
   }
 
-  private static int ChangeDirection(long dir, int curDir) {
-    if (dir == 0) {
-      return (4 + curDir - 1) % 4;
-    } else if (dir == 1) {
-      return (curDir + 1) % 4;
-    }
-    throw new ApplicationException($"Unknown direction change indicator. Value:'{dir}'");
-  }
-
-  private static void PrintPanel(Dictionary<(int x, int y), long> hullPanels) {
-    int minX = int.MaxValue, maxX = 0;
-    int minY = int.MaxValue, maxY = 0;
-    foreach (var (x, y) in hullPanels.Keys) {
-      minX = Math.Min(minX, x);
-      maxX = Math.Max(maxX, x);
-      minY = Math.Min(minY, y);
-      maxY = Math.Max(maxY, y);
-    }
-
-    for (var y = minY - 1; y <= maxY + 1; y++) {
-      for (var x = minX - 1; x <= maxX + 1; x++) {
-        hullPanels.TryGetValue((x, y), out long p);
-        Console.Write(p == 1 ? "##" : "  ");
-      }
-      Console.WriteLine();
-    }
+  private static void PrintResult(string partNo, string result, Stopwatch sw) {
+    sw.Stop();
+    Console.WriteLine($"Part {partNo} Result: {result} in {sw.Elapsed.TotalMilliseconds}ms");
+    sw.Restart();
   }
 }

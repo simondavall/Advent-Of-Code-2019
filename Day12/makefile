@@ -3,4 +3,4 @@ INPUTS=input.txt
 .PHONY: test
 
 test: Program.cs $(INPUTS)
-	dotnet build -c Release && ./bin/Release/net10.0/Day12 $(INPUTS)
+	dotnet build -c Debug && ./bin/Debug/net10.0/Day12 $(INPUTS)
